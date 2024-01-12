@@ -4,7 +4,7 @@ from docx import Document
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 result = ""
-#Rander Home page
+result_data = []
 @app.route('/')
 def hello():
     return render_template('index.html')
@@ -38,29 +38,13 @@ def upload():
                     return render_template("error.html", error_message=error_message)
 @app.route('/translation', methods=['POST'])
 def translate():
-    # with open(, 'r') as file:
-    #     # Initialize an empty string to store the lines
-    #     combined_lines = ""
-    #     for line in file:
-    #         combined_lines += line.strip()
-    #     text = request.form.get("text")
-    #     if text == "":
-    #         input = combined_lines
-    #     else:
-    #         input = text
-
     input = request.form.get("text")
-    khmer = ['ក\u200b', 'ខ', 'គ', 'ឃ', 'ង', 'ច', 'ឆ', 'ជ', 'ឈ', 'ញ', 'ដ', 'ឋ', 'ឌ', 'ឍ', 'ណ', 'ត', 'ថ', 'ទ', 'ធ', 'ន', 'ប', 'ផ', 'ព', 'ភ', 'ម', 'យ', 'រ', 'ល', 'វ', 'ស', 'ហ', 'ឡ', 'អ', 'ា', 'ិ', 'ី', 'ឹ', 'ឺ', 'ុ', 'ូ', 'ួ', 'ើ', 'ឿ', 'ៀ', 'េ', 'ែ', 'ៃ', 'ោ', 'ៅ', 'ុំ', 'ំ', 'ាំ', 'ះ', 'ុះ', 'េះ', 'ោះ', 'ែះ', 'ើះ', 'ាះ', 'អ', 'អា', 'ឥ', 'ឦ', 'ឧ', 'ឩ', 'ឪ', 'ឫ', 'ឬ', 'ឭ', 'ឮ', 'ឯ', 'ឰ', 'ឱ', 'ឳ', '៉', '៊', '៍', '់', '័', '៏', '៌', 'ៈ', 'ៗ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩', '។ល។', '។', '>', '<', '?', '!', '=', '-', '៕', '...', 'a\u200b', '{\u200b\u200b', '}', '[', ']', '៖', '√', '×', 'b', 'c', 'd', 'e', 'f', '', '#']
-    english = ['g', 'k', ',g', ',k', ']', 'j', '+', ',j', ',+', ',?', 'd', '-)', ',d', '0)', 'n', 't', ')', ',t', ',)', ',n', 'b', 'p', '&', ',p', 'm', ',y', 'r', ',l', 'w', 's', 'h', 'l', 'o', '*', '/', 'e', '[', '5', 'c', '3', '2', '%', 'q', '(', 'f', '<', 'i', ':', '_', '$', 'y', 'z', 'a', 'x', 'u', '!', '<a', '%a', '*a', 'o', 'o*', ',/', 'ea', 'ca', ',3', '\\', ',x', 'xa', '?', '?a', '"', 'fa', ':a', '_c', '@', '-', '0', '9', '>', "'", '7', '^', '1', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', '=,l=', '=', '$.1', '$"k', '8', '6', '.k', '-', '=,', "'''", 'v', '.(', '.)', '@(', '@)', './', '@>', '/@>', '!', 'u', 'x', '$', 'z', '' , '#']
+    khmer = ['ក', 'ខ', 'គ', 'ឃ', 'ង', 'ច', 'ឆ', 'ជ', 'ឈ', 'ញ', 'ដ', 'ឋ', 'ឌ', 'ឍ', 'ណ', 'ត', 'ថ', 'ទ', 'ធ', 'ន', 'ប', 'ផ', 'ព', 'ភ', 'ម', 'យ', 'រ', 'ល', 'វ', 'ស', 'ហ', 'ឡ', 'អ', 'ា', 'ិ', 'ី', 'ឹ', 'ឺ', 'ុ', 'ូ', 'ួ', 'ើ', 'ឿ', 'ៀ', 'េ', 'ែ', 'ៃ', 'ោ', 'ៅ', 'ុំ', 'ំ', 'ាំ', 'ះ', 'ុះ', 'េះ', 'ោះ', 'ែះ', 'ើះ', 'ាះ', 'អ', 'អា', 'ឥ', 'ឦ', 'ឧ', 'ឩ', 'ឪ', 'ឫ', 'ឬ', 'ឭ', 'ឮ', 'ឯ', 'ឰ', 'ឱ', 'ឳ', '៉', '៊', '៍', '់', '័', '៏', '៌', 'ៈ', 'ៗ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩', '។ល។', '។', '>', '<', '?', '!', '=', '-', '៕', '...', 'a', '{', '}', '[', ']', '៖', '√', '×', 'b', 'c', 'd', 'e', 'f', '', '#', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E','F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',')', '(', '$', '«', '»', '.', '_', '៎']
+    english = ['g', 'k', ',g', ',k', ']', 'j', '+', ',j', ',+', ',?', 'd', '-)', ',d', '0)', 'n', 't', ')', ',t', ',)', ',n', 'b', 'p', '&', ',p', 'm', ',y', 'r', ',l', 'w', 's', 'h', 'l', 'o', '*', '/', 'e', '[', '5', 'c', '3', '2', '%', 'q', '(', 'f', '<', 'i', ':', '_', '$', 'y', 'z', 'a', 'x', 'u', '!', '<a', '%a', '*a', 'o', 'o*', ',/', 'ea', 'ca', ',3', '\\', ',x', 'xa', '?', '?a', '"', 'fa', ':a', '_c', '@', '-', '0', '9', '>', "'", '7', '^', '1', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', '=,l=', '=', '$.1', '$"k', '8', '6', '.k', '-', '=,', "'''", 'v', '.(', '.)', '@(', '@)', './', '@>', '/@>', '!', 'u', 'x', '$', 'z', '' , '#', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '7', '7', '$', '8', '0', '4', ',-','+' ]
 
     dictionary = dict(zip(khmer, english))
     def change_dict_key(d, old_key, new_key, default_value=None):
         d[new_key] = d.pop(old_key, default_value)
-
-    change_dict_key(dictionary,'ក\u200b','ក')
-    change_dict_key(dictionary,'a\u200b','a')
-    # change_dict_key(dictionary,'១\u200b','១')
-    change_dict_key(dictionary,'{\u200b\u200b','{')
     dictionary['\n'] = '\n'
     dictionary['\t'] = '\t'
     dictionary['\r'] = '\r'
@@ -71,7 +55,7 @@ def translate():
         convertedText = ''
         for character in b:
             if character == "្":
-                character="a"
+                character="v"
             convertedText += dictionary.get(character, 'default_value')
         return convertedText
     characterUnicodes = {'a': '\u2801', 'b': '\u2803','c': '\u2809', 'd': '\u2819', 'e': '\u2811','f': '\u280B','g': '\u281B','h': '\u2813',
@@ -87,11 +71,6 @@ def translate():
         if type(textToConvert) is not str:
             raise TypeError("Only strings can be converted")
         return convert(textToConvert)
-    def convertNum(Num):
-        for i in Num:
-            print(i)
-            return(i)
-
     def convert(textToConvert):
         isNumber = False
         convertedText = ''
@@ -100,7 +79,6 @@ def translate():
                 convertedText += character
                 continue
             else:
-            # if isNumber and character not in numberPunctuations:
                 isNumber = False
             convertedText += characterUnicodes.get(character)
         return convertedText
@@ -135,10 +113,7 @@ def translate():
         segs = []
         cur = ""
         sentence = str_sentence
-        #for phr in str_sentence.split(): #no longer split by space, use 200b
-        #    print("phr: '", phr,"'")
         for word in sentence.split('\u200b'):
-        #print("PHR:[%s] len:%d" %(phr, len(phr)))
             for i,c in enumerate(word):
                 #print(i," c:", c)
                 cur += c
@@ -159,33 +134,22 @@ def translate():
                 elif is_start_of_kcc(nextchar) and not (c in KHSUB):
                     segs.append(cur)
                     cur=""
-                # add space back after split
-                #segs.append(" ")
-        return segs # [:-1] # trim last space
-
-    # testing some text
-    # text1 = []
-    # text = []
+        return segs 
     def Khmer_to_Braille(Khmer_sentence):
         KCC_Sengmentation = seg_kcc(Khmer_sentence)
-        # print(KCC_Sengmentation)
         text1 = ''
         text = []
-        # print the KCC segmentation
-        # print(KCC_Sengmentation)
         for i in KCC_Sengmentation:
             totalWord = []
             if (i.isnumeric()):
-                # print(i)
                 i = "#" + i
-                # print(i)
                 text.append(i)
                 continue
             for y in i:
                 totalWord.append(y)
                 lenTotalWord = len(totalWord)
             #Speacail case for Braille character and Segmentation
-                word1 = ['ៃ','ែ', 'េ']
+                word1 = ['ៃ','ែ', 'េ', 'ើ']
                 word2 = '្'
                 word3 = 'រ'
                 w1 = 'ោ'
@@ -209,11 +173,11 @@ def translate():
                 if(s1 in totalWord and s2 in totalWord):
                     totalWord.remove(s1)
                     totalWord.remove(s2)
-                    totalWord.insert(lenTotalWord-1, 'c')
+                    totalWord.insert(lenTotalWord-1, 'u')
                 if(d1 in totalWord and d2 in totalWord):
                     totalWord.remove(d1)
                     totalWord.remove(d2)
-                    totalWord.insert(lenTotalWord-1, 'e')
+                    totalWord.insert(lenTotalWord-1, '$')
                 if(l1 in totalWord and l2 in totalWord):
                     totalWord.remove(l1)
                     totalWord.remove(l2)
@@ -226,11 +190,11 @@ def translate():
                     totalWord.insert(1, word3)
                 for n in word1:
                     if(n in totalWord):
-                    # print(totalWord)
+            
                         totalWord.remove(n)
                         totalWord.insert(0, n)
                     elif(word2 in totalWord and word3 in totalWord and n in totalWord):
-                    # print(totalWord)
+                
                         totalWord.remove(n)
                         totalWord.remove(word2)
                         totalWord.remove(word3)
@@ -240,24 +204,20 @@ def translate():
                     else:
                         continue
             #Get all KCC segmentation of sentence store in array
-            # print(totalWord)
             text.append(totalWord)
             # print(totalWord)
+        eng = ''
         for n in text:
-            # print(n)
             for j in n:
-            #Convert each element of array to braille character and print it out
+                eng1 = convertKhToEng(j)
+                eng +=eng1
                 braille = convertText(convertKhToEng(j))
                 text1+=braille
                 print(j)
                 print(braille)
-                # braille
-        print(text1)
+        print(eng)
         return (text1)
-    # print(Khmer_to_Braille("ហេតុការណ៍អគ្គិភ័យនេះកើតឡើងនាយប់ថ្ងៃទី១ ខែមករា ឆ្នាំ២០២៤ បណ្ដាលមកពីភ្លើងចង្រ្កាន នៅចំណុចភូមិខ្មែរ ឃុំងន ស្រុកសណ្ដាន់ ខេត្តកំពង់ធំ នារសៀលថ្ងៃទី២ ខែមករា ឆ្នាំ២០២៤។ "))
-    
     b = (Khmer_to_Braille(input))
     return render_template('index.html', result = b, input = input)
-
 if __name__ == '__main__':
     app.run(debug=True)
